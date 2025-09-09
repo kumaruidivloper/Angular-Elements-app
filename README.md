@@ -27,7 +27,7 @@ npm install @angular/elements@17 @webcomponents/custom-elements
 
 @webcomponents/custom-elements → polyfill for browsers that don’t natively support Custom Elements (safe to add).
 
-# Zone update:
+## Zone update:
 npm uninstall zone.js
 npm install zone.js@0.13
 
