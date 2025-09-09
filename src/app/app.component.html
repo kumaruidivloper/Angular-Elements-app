@@ -1,0 +1,47 @@
+<div class="container">
+  <header class="header">
+    <h1>{{title}}</h1>
+    <div class="controls">
+      <button (click)="sendMessageToMFE()" class="btn btn-primary">
+        Send Message to MFE
+      </button>
+      <select (change)="updateTheme($any($event.target).value)" class="theme-selector">
+        <option value="light">Light Theme</option>
+        <option value="dark">Dark Theme</option>
+      </select>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <section class="mfe-section">
+      <h2>Micro Frontend Components</h2>
+      
+      <!-- MFE Component 1 - User Management -->
+      <div class="mfe-container">
+        <h3>User Management MFE</h3>
+        <user-management-mfe></user-management-mfe>
+      </div>
+
+      <!-- MFE Component 2 - Analytics Dashboard -->
+      <!-- <div class="mfe-container">
+        <h3>Analytics Dashboard MFE</h3> -->
+        <!-- <analytics-dashboard-mfe></analytics-dashboard-mfe> -->
+      <!-- </div> -->
+    </section>
+
+    <aside class="message-log">
+      <h3>Message Bus Log</h3>
+      <button (click)="clearMessages()" class="btn btn-secondary">Clear</button>
+      <div class="messages">
+        <div *ngFor="let message of messages" class="message" [ngClass]="'from-' + message.source">
+          <div class="message-header">
+            <span class="message-type">{{message.type}}</span>
+            <span class="message-source">from {{message.source}}</span>
+            <span class="message-time">{{message.timeString}}</span>
+          </div>
+          <div class="message-payload">{{message.payload | json}}</div>
+        </div>
+      </div>
+    </aside>
+  </main>
+</div>
