@@ -1,5 +1,6 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone, ViewChild, ElementRef } from '@angular/core';
 import { MessageBusService } from '../shared/services/message-bus.service';
+import { MfeLoaderService } from '../shared/services/mfe-loader.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -12,8 +13,9 @@ export class AppComponent implements OnInit, OnDestroy {
   messages: any[] = [];
   userInfo = { name: 'Kumar Shan', role: 'Admin' };
   private subscriptions: Subscription[] = [];
+  @ViewChild('mfeContainer', { static: true }) mfeContainer!: ElementRef;
 
-  constructor(private messageBus: MessageBusService, private cdr: ChangeDetectorRef,
+  constructor(private messageBus: MessageBusService, private cdr: ChangeDetectorRef, private mfeLoader: MfeLoaderService,
     private ngZone: NgZone) {}
 
   ngOnInit() {
@@ -72,6 +74,7 @@ export class AppComponent implements OnInit, OnDestroy {
       message: 'Hello from Host!',
       timestamp: new Date().toISOString()
     });
+    this.loadMfe()
   }
 
   updateTheme(theme: string) {
@@ -80,5 +83,16 @@ export class AppComponent implements OnInit, OnDestroy {
 
   clearMessages() {
     this.messages = [];
+  }
+
+  async loadMfe() {
+    await this.mfeLoader.loadScript(
+      'user-management-mfe',
+      './assets/user-management-mfe/user-management-mfe.js'  // your bundled element
+    );
+
+    const element = document.createElement('user-management-mfe');
+    this.mfeContainer.nativeElement.innerHTML = '';
+    this.mfeContainer.nativeElement.appendChild(element);
   }
 }
