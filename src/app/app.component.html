@@ -2,10 +2,10 @@
   <header class="header">
     <h1>{{title}}</h1>
     <div class="controls">
-      <button class="btn btn-primary" (click)="loadMfe()" [disabled]="isDisableMFELoad">
+      <button class="btn btn-primary" (click)="loadMfe()" [disabled]="isDisableMFELoad" [ngStyle]="!isDisableMFELoad ? {'cursor' : 'pointer'} : {'cursor' : 'default'}">
         Load User Management MFE 
       </button>
-      <button (click)="sendMessageToMFE()" class="btn btn-primary" [disabled]="isSendMessageToMFE">
+      <button (click)="sendMessageToMFE()" class="btn btn-primary" [disabled]="isSendMessageToMFE" [ngStyle]="isDisableMFELoad ? {'cursor' : 'pointer'} : {'cursor' : 'default'}">
         Send Message to MFE
       </button>
       <select (change)="updateTheme($any($event.target).value)" class="theme-selector" [disabled]="isSendMessageToMFE">
