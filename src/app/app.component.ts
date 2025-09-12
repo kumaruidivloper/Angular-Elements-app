@@ -15,6 +15,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
   @ViewChild('mfeContainer', { static: true }) mfeContainer!: ElementRef;
   isLoader: boolean = true;
+  isSendMessageToMFE: boolean = true;
+  isDisableMFELoad: boolean = false;
 
   constructor(private messageBus: MessageBusService, private cdr: ChangeDetectorRef, private mfeLoader: MfeLoaderService, private renderer: Renderer2,
     private ngZone: NgZone) {}
@@ -75,7 +77,6 @@ export class AppComponent implements OnInit, OnDestroy {
       message: 'Hello from Host!',
       timestamp: new Date().toISOString()
     });
-    this.loadMfe()
   }
 
   updateTheme(theme: string) {
@@ -107,6 +108,8 @@ export class AppComponent implements OnInit, OnDestroy {
         this.mfeContainer.nativeElement.innerHTML = '';
         this.mfeContainer.nativeElement.appendChild(element);
         this.isLoader = false;
+        this.isSendMessageToMFE = false;
+        this.isDisableMFELoad = true;
     }, 1500)
     
   }

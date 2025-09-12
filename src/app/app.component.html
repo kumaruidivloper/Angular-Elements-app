@@ -2,10 +2,13 @@
   <header class="header">
     <h1>{{title}}</h1>
     <div class="controls">
-      <button (click)="sendMessageToMFE()" class="btn btn-primary">
+      <button class="btn btn-primary" (click)="loadMfe()" [disabled]="isDisableMFELoad">
+        Load User Management MFE 
+      </button>
+      <button (click)="sendMessageToMFE()" class="btn btn-primary" [disabled]="isSendMessageToMFE">
         Send Message to MFE
       </button>
-      <select (change)="updateTheme($any($event.target).value)" class="theme-selector">
+      <select (change)="updateTheme($any($event.target).value)" class="theme-selector" [disabled]="isSendMessageToMFE">
         <option value="light">Light Theme</option>
         <option value="dark">Dark Theme</option>
       </select>
