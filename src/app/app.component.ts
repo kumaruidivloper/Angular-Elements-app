@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { MessageBusService } from '../shared/services/message-bus.service';
 import { MfeLoaderService } from '../shared/services/mfe-loader.service';
 import { Subscription } from 'rxjs';
@@ -14,8 +14,9 @@ export class AppComponent implements OnInit, OnDestroy {
   userInfo = { name: 'Kumar Shan', role: 'Admin' };
   private subscriptions: Subscription[] = [];
   @ViewChild('mfeContainer', { static: true }) mfeContainer!: ElementRef;
+  isLoader: boolean = true;
 
-  constructor(private messageBus: MessageBusService, private cdr: ChangeDetectorRef, private mfeLoader: MfeLoaderService,
+  constructor(private messageBus: MessageBusService, private cdr: ChangeDetectorRef, private mfeLoader: MfeLoaderService, private renderer: Renderer2,
     private ngZone: NgZone) {}
 
   ngOnInit() {
@@ -85,14 +86,28 @@ export class AppComponent implements OnInit, OnDestroy {
     this.messages = [];
   }
 
+  addLoader() {
+  const div = this.renderer.createElement('div');
+  this.renderer.addClass(div, 'mfe-loading');
+  this.renderer.appendChild(this.mfeContainer.nativeElement, div);
+}
+
   async loadMfe() {
     await this.mfeLoader.loadScript(
       'user-management-mfe',
       './assets/user-management-mfe/user-management-mfe.js'  // your bundled element
     );
+    if(this.isLoader) {
+        this.addLoader()
+    }
+    
 
-    const element = document.createElement('user-management-mfe');
-    this.mfeContainer.nativeElement.innerHTML = '';
-    this.mfeContainer.nativeElement.appendChild(element);
+    setTimeout(() => {
+        const element = document.createElement('user-management-mfe');
+        this.mfeContainer.nativeElement.innerHTML = '';
+        this.mfeContainer.nativeElement.appendChild(element);
+        this.isLoader = false;
+    }, 1500)
+    
   }
 }
