@@ -88,29 +88,42 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   addLoader() {
-  const div = this.renderer.createElement('div');
-  this.renderer.addClass(div, 'mfe-loading');
-  this.renderer.appendChild(this.mfeContainer.nativeElement, div);
-}
+    const div = this.renderer.createElement('div');
+    this.renderer.addClass(div, 'mfe-loading');
+    this.renderer.appendChild(this.mfeContainer.nativeElement, div);
+  }
 
-  async loadMfe() {
-    await this.mfeLoader.loadScript(
-      'user-management-mfe',
-      './assets/user-management-mfe/user-management-mfe.js'  // your bundled element
-    );
-    if(this.isLoader) {
-        this.addLoader()
-    }
-    
+  async loadMfe(): Promise<void> {
+      try {
+        this.isLoader = true;
+        this.isSendMessageToMFE = true; // prevent sending until loaded
 
-    setTimeout(() => {
-        const element = document.createElement('user-management-mfe');
-        this.mfeContainer.nativeElement.innerHTML = '';
-        this.mfeContainer.nativeElement.appendChild(element);
+        // 1️⃣ Load JS + CSS assets for MFE
+        await this.mfeLoader.loadAssets(
+          'user-management-mfe',
+          './assets/user-management-mfe/user-management-mfe.js',
+          './assets/user-management-mfe/styles.css'
+        );
+
+        // 2️⃣ Show loader while assets are bootstrapping
+        this.addLoader();
+
+        // 3️⃣ Create the custom element once assets are available
+        const mfeElement = document.createElement('user-management-mfe');
+
+        // Clear container & inject new MFE element
+        const container = this.mfeContainer.nativeElement;
+        container.innerHTML = '';
+        container.appendChild(mfeElement);
+
+        // 4️⃣ Mark as loaded (Angular can use this to hide loader)
         this.isLoader = false;
         this.isSendMessageToMFE = false;
         this.isDisableMFELoad = true;
-    }, 1500)
-    
-  }
+
+      } catch (error) {
+        console.error('❌ Failed to load MFE:', error);
+        this.isLoader = false;
+      }
+    }
 }
