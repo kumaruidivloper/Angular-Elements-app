@@ -18,7 +18,11 @@ export class AppComponent implements OnInit, OnDestroy {
   isSendMessageToMFE: boolean = true;
   isDisableMFELoad: boolean = false;
 
-  constructor(private messageBus: MessageBusService, private cdr: ChangeDetectorRef, private mfeLoader: MfeLoaderService, private renderer: Renderer2,
+  constructor(
+    private messageBus: MessageBusService, 
+    private cdr: ChangeDetectorRef, 
+    private mfeLoader: MfeLoaderService, 
+    private renderer: Renderer2,
     private ngZone: NgZone) {}
 
   ngOnInit() {
@@ -108,7 +112,8 @@ export class AppComponent implements OnInit, OnDestroy {
         // 2️⃣ Show loader while assets are bootstrapping
         this.addLoader();
 
-        // 3️⃣ Create the custom element once assets are available
+        setTimeout(() => {
+            // 3️⃣ Create the custom element once assets are available
         const mfeElement = document.createElement('user-management-mfe');
 
         // Clear container & inject new MFE element
@@ -120,10 +125,12 @@ export class AppComponent implements OnInit, OnDestroy {
         this.isLoader = false;
         this.isSendMessageToMFE = false;
         this.isDisableMFELoad = true;
+        },1500)
+      
 
       } catch (error) {
         console.error('❌ Failed to load MFE:', error);
         this.isLoader = false;
       }
-    }
+  }
 }
