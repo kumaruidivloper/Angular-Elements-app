@@ -105,7 +105,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
         const tagname = `${value}-management-mfe`;
         const scriptPath = `./assets/user-management-mfe/${value}-management-mfe.js`;
-        const stylePath = `./assets/user-management-mfe/user-management-mfe-style.css`;
+        const stylePath = `./assets/user-management-mfe/${value}-management-mfe-style.css`;
 
         // 1️⃣ Load JS + CSS assets for MFE
         await this.mfeLoader.loadAssets(tagname, scriptPath, stylePath);
