@@ -2,12 +2,17 @@
   <header class="header">
     <h1>{{title}}</h1>
     <div class="controls">
-      <button class="btn btn-primary" (click)="loadMfe()" [disabled]="isDisableMFELoad" [ngStyle]="!isDisableMFELoad ? {'cursor' : 'pointer'} : {'cursor' : 'default', 'opacity': '0.5', 'pointer-events': 'none'}">
+      <button class="btn btn-primary" (click)="loadMfe('user')" [disabled]="isDisableMFELoad" [ngStyle]="!isDisableMFELoad ? {'cursor' : 'pointer'} : {'cursor' : 'default', 'opacity': '0.5', 'pointer-events': 'none'}">
         Load User Management MFE 
       </button>
       <button (click)="sendMessageToMFE()" class="btn btn-primary" [disabled]="isSendMessageToMFE" [ngStyle]="isDisableMFELoad ? {'cursor' : 'pointer'} : {'opacity': '0.5', 'pointer-events': 'none'}">
         Send Message to MFE
       </button>
+      <select class="theme-selector" (change)="selectMFEApp($any($event.target).value)" [disabled]="isSendMessageToMFE">
+        <option value="user">Please Select MFE</option>
+        <option value="user">User</option>
+        <option value="test">Test</option>
+      </select>
       <select (change)="updateTheme($any($event.target).value)" class="theme-selector" [disabled]="isSendMessageToMFE">
         <option value="light">Light Theme</option>
         <option value="dark">Dark Theme</option>

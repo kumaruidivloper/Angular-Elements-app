@@ -17,6 +17,7 @@ export class AppComponent implements OnInit, OnDestroy {
   isLoader: boolean = true;
   isSendMessageToMFE: boolean = true;
   isDisableMFELoad: boolean = false;
+  selectedApp: string = 'user';
 
   constructor(
     private messageBus: MessageBusService, 
@@ -97,24 +98,24 @@ export class AppComponent implements OnInit, OnDestroy {
     this.renderer.appendChild(this.mfeContainer.nativeElement, div);
   }
 
-  async loadMfe(): Promise<void> {
+  async loadMfe(value: string): Promise<void> {
       try {
         this.isLoader = true;
         this.isSendMessageToMFE = true; // prevent sending until loaded
 
+        const tagname = `${value}-management-mfe`;
+        const scriptPath = `./assets/user-management-mfe/${value}-management-mfe.js`;
+        const stylePath = `./assets/user-management-mfe/user-management-mfe-style.css`;
+
         // 1️⃣ Load JS + CSS assets for MFE
-        await this.mfeLoader.loadAssets(
-          'user-management-mfe',
-          './assets/user-management-mfe/user-management-mfe.js',
-          './assets/user-management-mfe/user-management-mfe-style.css'
-        );
+        await this.mfeLoader.loadAssets(tagname, scriptPath, stylePath);
 
         // 2️⃣ Show loader while assets are bootstrapping
         this.addLoader();
 
         setTimeout(() => {
         // 3️⃣ Create the custom element once assets are available
-        const mfeElement = document.createElement('user-management-mfe');
+        const mfeElement = document.createElement(tagname);
 
         // Clear container & inject new MFE element
         const container = this.mfeContainer.nativeElement;
@@ -132,5 +133,11 @@ export class AppComponent implements OnInit, OnDestroy {
         console.error('❌ Failed to load MFE:', error);
         this.isLoader = false;
       }
+  }
+
+  selectMFEApp(value: string) {
+    console.log(value);
+    this.selectedApp = value;
+    this.loadMfe(value);
   }
 }
