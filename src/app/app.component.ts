@@ -106,14 +106,14 @@ export class AppComponent implements OnInit, OnDestroy {
         await this.mfeLoader.loadAssets(
           'user-management-mfe',
           './assets/user-management-mfe/user-management-mfe.js',
-          './assets/user-management-mfe/styles.css'
+          './assets/user-management-mfe/user-management-mfe-style.css'
         );
 
         // 2️⃣ Show loader while assets are bootstrapping
         this.addLoader();
 
         setTimeout(() => {
-            // 3️⃣ Create the custom element once assets are available
+        // 3️⃣ Create the custom element once assets are available
         const mfeElement = document.createElement('user-management-mfe');
 
         // Clear container & inject new MFE element
