@@ -164,3 +164,7 @@
 @keyframes spin {
   to { transform: translate(-50%, -50%) rotate(360deg); }
 }
+
+.first-upper {
+   text-transform: uppercase;
+}
