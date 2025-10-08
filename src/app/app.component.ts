@@ -17,7 +17,11 @@ export class AppComponent implements OnInit, OnDestroy {
   isLoader: boolean = true;
   isSendMessageToMFE: boolean = true;
   isDisableMFELoad: boolean = false;
-  selectedApp: string = 'user';
+  selectedApp: string = 'test';
+  isEdit: boolean = true;
+  toggleMFE: boolean = true;
+  updatedValue: any;
+  notUpdated: boolean = true;
 
   constructor(
     private messageBus: MessageBusService, 
@@ -42,6 +46,13 @@ export class AppComponent implements OnInit, OnDestroy {
       if (this.messages.length > 10) {
         this.messages = this.messages.slice(0, 10);
       }
+      if(event.type === 'TEST_USER_UPDATED') {
+         this.isEdit = true;
+         this.notUpdated = false;
+         this.updatedValue = event.payload.user
+         console.log(event.payload.user);
+         this.unloadMfe()
+      }
       this.cdr.detectChanges();
     });
 
@@ -52,11 +63,19 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     const dataRequestSubscription = this.messageBus.on('REQUEST_DATA').subscribe(event => {
-      // Respond to data requests from MFEs
+      if(event.payload.requestId === 'test-user-list') {
+        this.messageBus.emit('DATA_RESPONSE', {
+        requestId: event.payload.requestId,
+        data: this.getTestUserData()
+      });
+      } else {
+        // Respond to data requests from MFEs
       this.messageBus.emit('DATA_RESPONSE', {
         requestId: event.payload.requestId,
         data: this.getUserData()
       });
+      }
+      
       this.cdr.detectChanges();
     });
 
@@ -74,6 +93,12 @@ export class AppComponent implements OnInit, OnDestroy {
         { id: 2, name: 'Bob Smith', department: 'Marketing' },
         { id: 3, name: 'Carol Davis', department: 'HR' }
       ]
+    };
+  }
+
+  private getTestUserData() {
+    return {
+      testUser: {Firstname: 'Jason', LastName: 'Gillespie', Gender: 'Male', DOB: '19/04/1975'}
     };
   }
 
@@ -99,6 +124,8 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   async loadMfe(value: string): Promise<void> {
+    this.selectedApp = value;
+     value === 'test' ? this.isEdit = false : this.isEdit = false 
       try {
         this.isLoader = true;
         this.isSendMessageToMFE = true; // prevent sending until loaded
@@ -134,6 +161,21 @@ export class AppComponent implements OnInit, OnDestroy {
         this.isLoader = false;
       }
   }
+
+  unloadMfe(): void {
+  const container = this.mfeContainer.nativeElement;
+
+  if (container) {
+    container.innerHTML = ''; // removes all child nodes
+  }
+
+  // Reset internal flags if needed
+  this.isLoader = false;
+  this.isSendMessageToMFE = false;
+  this.isDisableMFELoad = false;
+
+  console.log('✅ MFE unloaded successfully');
+}
 
   selectMFEApp(value: string) {
     console.log(value);
