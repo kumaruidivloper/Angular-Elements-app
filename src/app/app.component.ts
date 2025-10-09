@@ -20,7 +20,7 @@ export class AppComponent implements OnInit, OnDestroy {
   selectedApp: string = 'test';
   isEdit: boolean = true;
   toggleMFE: boolean = true;
-  updatedValue: any;
+  updatedValue = this.getTestUserData().testUser
   notUpdated: boolean = true;
 
   constructor(
@@ -49,8 +49,8 @@ export class AppComponent implements OnInit, OnDestroy {
       if(event.type === 'TEST_USER_UPDATED') {
          this.isEdit = true;
          this.notUpdated = false;
-         this.updatedValue = event.payload.user
-         console.log(event.payload.user);
+         this.updatedValue = this.getTestUserData().testUser
+         console.log(this.getTestUserData().testUser);
          this.unloadMfe()
       }
       this.cdr.detectChanges();
@@ -97,10 +97,23 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private getTestUserData() {
-    return {
-      testUser: {Firstname: 'Jason', LastName: 'Gillespie', Gender: 'Male', DOB: '19/04/1975'}
-    };
+  const storedData = localStorage.getItem('formSubmit');
+  let parsedData = null;
+
+  if (storedData) {
+    try {
+      parsedData = JSON.parse(storedData);
+    } catch (error) {
+      console.error('❌ Error parsing formSubmit data from localStorage:', error);
+    }
+  } else {
+    console.warn('⚠️ No formSubmit data found in localStorage');
   }
+
+  return {
+    testUser: parsedData
+  };
+}
 
   sendMessageToMFE() {
     this.messageBus.emit('HOST_MESSAGE', {

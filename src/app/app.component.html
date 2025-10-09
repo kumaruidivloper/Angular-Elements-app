@@ -27,45 +27,34 @@
       <!-- MFE Component 1 - User Management -->
       <div class="mfe-container">
         @if(isEdit) {
-        <h3 style="display: inline-block; text-align: right; color: blue; 
+        <h3 style="display: inline-block; text-align: right; color:rgb(61, 7, 209); 
         cursor: pointer; float: right; padding: 5px 18px 5px 18px; border: solid 1px #00000021; border-radius: 10px;" 
-        (click)="loadMfe('test')">Edit</h3>
+        (click)="loadMfe('test')"><i class="fa fa-edit" style="font-size:18px;color:rgb(61, 7, 209)"></i> Edit</h3>
         }
         <h3><span class="first-upper">{{selectedApp}}</span> CRUD MFE</h3>
         @if(isEdit) {
           <div class="forGridDiv">
             <div class="div1">Firstname:</div>
             <div class="div2">
-              @if(notUpdated) {
-                Jason
-              } @else { 
+              
                 {{updatedValue.firstName}}
-              }
               
             </div>
             <div class="div3">LastName:</div>
             <div class="div4">
-              @if(notUpdated) {
-                Gillespie
-              } @else { 
+             
                 {{updatedValue.lastName}}
-              }
             </div>
             <div class="div5">Gender:</div>
             <div class="div6">
-               @if(notUpdated) {
-                Male
-              } @else { 
+            
                 {{updatedValue.gender}}
-              }
+
             </div>
             <div class="div7">DOB:</div>
             <div class="div8">
-               @if(notUpdated) {
-                19/04/1975
-              } @else { 
+               
                 {{updatedValue.dob}}
-              }
             </div>
         </div>
         }
