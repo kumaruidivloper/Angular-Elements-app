@@ -107,6 +107,9 @@ export class AppComponent implements OnInit, OnDestroy {
       console.error('❌ Error parsing formSubmit data from localStorage:', error);
     }
   } else {
+    return {
+      testUser: {firstName:"Jason",lastName:"Gillespie",gender:"Male",dob:"19/04/1975"}
+    }
     console.warn('⚠️ No formSubmit data found in localStorage');
   }
 
