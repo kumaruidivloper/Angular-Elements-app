@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone, ViewChild, Ele
 import { MessageBusService } from '../shared/services/message-bus.service';
 import { MfeLoaderService } from '../shared/services/mfe-loader.service';
 import { Subscription } from 'rxjs';
+import { MockApiService } from './services/mock-api.service'; 
+import { User } from '../Interface/user';
 
 @Component({
   selector: 'app-root',
@@ -20,17 +22,28 @@ export class AppComponent implements OnInit, OnDestroy {
   selectedApp: string = 'test';
   isEdit: boolean = true;
   toggleMFE: boolean = true;
-  updatedValue = this.getTestUserData().testUser
+  updatedValue!: User
   notUpdated: boolean = true;
+  storedData:any;
 
   constructor(
     private messageBus: MessageBusService, 
     private cdr: ChangeDetectorRef, 
     private mfeLoader: MfeLoaderService, 
     private renderer: Renderer2,
-    private ngZone: NgZone) {}
+    private ngZone: NgZone,
+    private mockApiService: MockApiService
+  ) {}
 
   ngOnInit() {
+    this.getUserDataFromAPI()
+    this.updatedValue = {
+      id: '',
+      firstName: '',
+      lastName: '',
+      gender: '',
+      dob: ''
+    };
     // Set initial shared state
     this.messageBus.setState('userInfo', this.userInfo);
     this.messageBus.setState('theme', 'light');
@@ -49,8 +62,8 @@ export class AppComponent implements OnInit, OnDestroy {
       if(event.type === 'TEST_USER_UPDATED') {
          this.isEdit = true;
          this.notUpdated = false;
-         this.updatedValue = this.getTestUserData().testUser
-         console.log(this.getTestUserData().testUser);
+         this.updatedValue = event.payload.user;
+         console.log(event.payload.user);
          this.unloadMfe()
       }
       this.cdr.detectChanges();
@@ -66,7 +79,7 @@ export class AppComponent implements OnInit, OnDestroy {
       if(event.payload.requestId === 'test-user-list') {
         this.messageBus.emit('DATA_RESPONSE', {
         requestId: event.payload.requestId,
-        data: this.getTestUserData()
+        data: this.updatedValue
       });
       } else {
         // Respond to data requests from MFEs
@@ -96,27 +109,46 @@ export class AppComponent implements OnInit, OnDestroy {
     };
   }
 
-  private getTestUserData() {
-  const storedData = localStorage.getItem('formSubmit');
-  let parsedData = null;
+//   private getTestUserData() {
+//   const storedData = localStorage.getItem('formSubmit');
+//   let parsedData = null;
 
-  if (storedData) {
-    try {
-      parsedData = JSON.parse(storedData);
-    } catch (error) {
-      console.error('❌ Error parsing formSubmit data from localStorage:', error);
-    }
-  } else {
-    return {
-      testUser: {firstName:"Jason",lastName:"Gillespie",gender:"Male",dob:"19/04/1975"}
-    }
-    console.warn('⚠️ No formSubmit data found in localStorage');
+//   if (storedData) {
+//     try {
+//       parsedData = JSON.parse(storedData);
+//     } catch (error) {
+//       console.error('❌ Error parsing formSubmit data from localStorage:', error);
+//     }
+//   } else {
+//     return {
+//       testUser: {firstName:"Jason",lastName:"Gillespie",gender:"Male",dob:"19/04/1975"}
+//     }
+//     console.warn('⚠️ No formSubmit data found in localStorage');
+//   }
+
+//   return {
+//     testUser: parsedData
+//   };
+// }
+
+getUserDataFromAPI() {
+   const obs$ = this.mockApiService.getUserData(1);
+  console.log('Returned from API service:', obs$); // should log "Observable"
+  
+  obs$
+    .subscribe({
+      next: (response: any) => {
+        console.log('response',response);
+        this.storedData = response;
+         this.isEdit = true;
+         this.notUpdated = false;
+         this.updatedValue = this.storedData;
+        //  this.testUser
+         this.unloadMfe()
+      },
+      error: (error:any) => console.error("Error loading saved form state:", error),
+    });
   }
-
-  return {
-    testUser: parsedData
-  };
-}
 
   sendMessageToMFE() {
     this.messageBus.emit('HOST_MESSAGE', {
